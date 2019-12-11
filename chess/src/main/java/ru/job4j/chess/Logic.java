@@ -29,21 +29,28 @@ public class Logic {
         boolean rst = false;
         int index = this.findBy(source);
         int index2 = this.findBy(dest);
-                if (index == -1) {
-                    throw new FigureNotFoundException();
+        try {
+            if (index == -1) {
+                throw new FigureNotFoundException();
+            }
+            Cell[] steps = this.figures[index].way(source, dest);
+            for (int ind = 0; ind != steps.length; ind++) {
+                int empty = findBy(steps[ind]);
+                if (empty != -1 || index2 != -1) {
+                    throw new OccupiedWayException();
                 }
-                Cell[] steps = this.figures[index].way(source, dest);
-                for (int ind = 0; ind != steps.length; ind++) {
-                    int empty = findBy(steps[ind]);
-                    if (empty != -1 || index2 != -1) {
-                        throw new OccupiedWayException();
-                    }
-                }
-                    if (steps.length>0 && steps[steps.length-1].equals(dest)){
-                        rst = true;
-                        this.figures[index] = this.figures[index].copy(dest);
-                    }
-
+            }
+            if (steps.length > 0 && steps[steps.length - 1].equals(dest)) {
+                rst = true;
+                this.figures[index] = this.figures[index].copy(dest);
+            }
+        }catch (FigureNotFoundException fnfe){
+            System.out.println(" Empty Cell. ");
+        }catch (ImpossibleMoveException ime){
+            System.out.println(" Impossible move. ");
+        }catch (OccupiedWayException owe){
+            System.out.println(" The way is busy. ");
+        }
         return rst;
     }
 

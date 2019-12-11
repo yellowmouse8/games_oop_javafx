@@ -44,27 +44,22 @@ public class LogicTest {
     @Test
     public void bishopMoveUpImpossible() {
         Logic logic = new Logic();
-        boolean error = false;
         logic.add(new BishopBlack(Cell.C8));
-        try {
-            logic.move(Cell.C8, Cell.C7);
-        } catch (ImpossibleMoveException ime) {
-            error = true;
-        }
-        assertTrue(error);
+        assertThat(logic.move(Cell.C8, Cell.C7), is(false));
     }
 
     @Test
     public void emptyCellFigure () {
         Logic logic = new Logic();
-        boolean error = false;
         logic.add(new BishopBlack(Cell.C8));
-        try{
-            logic.move(Cell.C7, Cell.C4);
-        } catch (FigureNotFoundException fnfe){
-            error = true;
-        }
-        assertTrue(error);
-    }
+        assertThat(logic.move(Cell.C8,Cell.C4), is(false));
 
+    }
+    @Test
+    public void whenPlaceDoesntVacant(){
+        Logic logic = new Logic();
+        logic.add(new BishopBlack(Cell.C8));
+        logic.add(new PawnBlack(Cell.C7));
+        assertThat(logic.move(Cell.C8,Cell.C7), is(false));
+    }
 }
