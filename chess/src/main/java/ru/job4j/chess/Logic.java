@@ -2,6 +2,9 @@ package ru.job4j.chess;
 
 import ru.job4j.chess.firuges.Cell;
 import ru.job4j.chess.firuges.Figure;
+import ru.job4j.chess.firuges.exceptions.FigureNotFoundException;
+import ru.job4j.chess.firuges.exceptions.ImpossibleMoveException;
+import ru.job4j.chess.firuges.exceptions.OccupiedWayException;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -21,16 +24,26 @@ public class Logic {
         this.figures[this.index++] = figure;
     }
 
-    public boolean move(Cell source, Cell dest) {
+    public boolean move(Cell source, Cell dest) throws ImpossibleMoveException, OccupiedWayException
+            ,FigureNotFoundException {
         boolean rst = false;
         int index = this.findBy(source);
-        if (index != -1) {
-            Cell[] steps = this.figures[index].way(source, dest);
-            if (steps.length > 0 && steps[steps.length - 1].equals(dest)) {
-                rst = true;
-                this.figures[index] = this.figures[index].copy(dest);
-            }
-        }
+        int index2 = this.findBy(dest);
+                if (index == -1) {
+                    throw new FigureNotFoundException();
+                }
+                Cell[] steps = this.figures[index].way(source, dest);
+                for (int ind = 0; ind != steps.length; ind++) {
+                    int empty = findBy(steps[ind]);
+                    if (empty != -1 || index2 != -1) {
+                        throw new OccupiedWayException();
+                    }
+                }
+                    if (steps.length>0 && steps[steps.length-1].equals(dest)){
+                        rst = true;
+                        this.figures[index] = this.figures[index].copy(dest);
+                    }
+
         return rst;
     }
 
