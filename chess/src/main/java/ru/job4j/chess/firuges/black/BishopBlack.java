@@ -21,38 +21,20 @@ public class BishopBlack implements Figure {
         return this.position;
     }
 
+    private boolean isDiagonal(Cell source, Cell dest) {
+        return Math.abs(source.x - dest.x) == Math.abs(source.y - dest.y);
+    }
+
     @Override
     public Cell[] way(Cell source, Cell dest) throws ImpossibleMoveException {
-        boolean valid = false;
-        Cell[] steps = new Cell[0];
-        int begin = Math.abs(source.x - dest.x);
-        if (source.y == dest.y + begin && source.x == dest.x + begin){
-            steps = new Cell[begin];
-            for (int index = 0; index!=steps.length; index++){
-                steps[index] = Cell.findCell(source.x - index -1, source.y - index -1 );
-            }
-            valid = true;
-        }else  if(source.y == dest.y + begin && source.x == dest.x - begin){
-            steps = new Cell[begin];
-            for (int index = 0; index !=steps.length; index++){
-                steps[index] = Cell.findCell(source.x + index + 1, source.y - index - 1);
-            }
-            valid = true;
-        } else if (source.y == dest.y - begin && source.x == dest.x + begin){
-            steps = new Cell[begin];
-            for (int index = 0; index != steps.length; index++){
-                steps[index] = Cell.findCell(source.x - index - 1, source.y + index + 1);
-            }
-            valid = true;
-        }else  if(source.y == dest.y - begin && source.x == dest.x -begin){
-            steps = new Cell[begin];
-            for (int index = 0; index != steps.length; index++){
-                steps[index] = Cell.findCell(source.x + index + 1, source.y + index +1 );
-            }
-            valid = true;
-        }
-        if (!valid){
+        if (!this.isDiagonal(source, dest)) {
             throw new ImpossibleMoveException();
+        }
+        Cell[] steps = new Cell[Math.max(source.x, dest.x) - Math.min(source.x, dest.x)];
+        int deltaX = dest.x > source.x ? 1 : -1;
+        int deltaY = dest.y > source.y ? 1 : -1;
+        for (int index = 1; index <= steps.length; index++) {
+            steps[index - 1] = Cell.findCell(source.x + index * deltaX, source.y + index * deltaY);
         }
         return steps;
     }
